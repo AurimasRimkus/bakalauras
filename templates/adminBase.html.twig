@@ -1,0 +1,28 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <div class = "row">
+        <div class="col-xs-2 sidebar">
+            <br />
+            <ul>
+                <a href="{{ path('admin') }}"><li{% if app.request.get('_route') == 'admin' %} class="active"{% endif %}>Credits</li></a>
+                <a href="{{ path('applications') }}"><li{% if app.request.get('_route') == 'applications' %} class="active"{% endif %}>Applications</li></a>
+                <a href="{{ path('deposits') }}"><li{% if app.request.get('_route') == 'deposits' %} class="active"{% endif %}>Deposits</li></a>
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+                    <a href="{{ path('customers') }}"><li{% if app.request.get('_route') == 'customers' %} class="active"{% endif %}>Customers</li></a>
+                    <a href="{{ path('depositTypes') }}"><li{% if app.request.get('_route') == 'depositTypes' %} class="active"{% endif %}>Deposit types</li></a>
+                    <a href="{{ path('pricelists') }}"><li{% if app.request.get('_route') == 'pricelists' %} class="active"{% endif %}>Pricelists</li></a>
+                    <a href="{{ path('payments') }}"><li{% if app.request.get('_route') == 'payments' %} class="active"{% endif %}>Payments</li></a>
+                    <a href="{{ path('writeoffs') }}"><li{% if app.request.get('_route') == 'writeoffs' %} class="active"{% endif %}>Writeoffs</li></a>
+                {% endif %}
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <a href="{{ path('config') }}"><li{% if app.request.get('_route') == 'config' %} class="active"{% endif %}>Configs</li></a>
+                    <a href="{{ path('users') }}"><li{% if app.request.get('_route') == 'users' %} class="active"{% endif %}>User roles</li></a>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="col-xs-10 content">
+            {% block adminBody %}
+            {% endblock  %}
+        </div>
+    </div>
+{% endblock %}

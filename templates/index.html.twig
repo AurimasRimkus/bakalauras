@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <form class="col-xs-6" action="takeCredit">
+                <div class="col">
+                    <div class="slidecontainer">
+                        <p>Credit: <span id="creditValue"></span>eur</p>
+                        <input type="range" min="{{ min }}" max="{{ max }}" value="1000" step="100" class="slider" id="creditRange" name="credit">
+                    </div>
+                    <div class="slidecontainer">
+                        <p>Length: <span id="timeValue"></span>mo.</p>
+                        <input type="range" min="1" max="36" value="1" step="1" class="slider" id="timeRange" name="length">
+                    </div>
+                    <br />
+                    <input type = "submit" class="btn btn-lg btn-primary" value = {% if app.user %}"Take credit"{% else %}"Register"{% endif %}>
+                </div>
+            </form>
+            <div class="col-xs-6">
+                Credit information <br/>
+                Length: <span id = "length"></span>mo.<br/>
+                Credit: <span id = "credit"></span>eur.<br/>
+                Interest: <span id = "interest"></span>%<br/>
+                Monthly payment: <span id = "monthlyPayment"></span>eur.<br/>
+                Annual percentage rate: <span id = "bvkkmn"></span>%<br/><br/>
+
+                Total paid back: <span id="creditSum"></span>eur. <br />
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>var plists = {{ pricelists|json_encode()|raw }};</script>
+    <script src="{{ asset('js/slider.js?a=9') }}"></script>
+{% endblock %}

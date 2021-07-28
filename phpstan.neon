@@ -1,0 +1,5 @@
+parameters:
+    autoload_directories:
+        - src/Migrations
+    excludes_analyse:
+        - 'src/Migrations'

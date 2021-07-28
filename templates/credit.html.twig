@@ -1,0 +1,152 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+<table class="table table-bordered" id="creditInfo">
+    <thead class="thead-inverse">
+    <tr>
+        {% if credit.acceptDate is not empty %}
+        <th>Credit ID</th>
+        {% else %}
+        <th>Application ID</th>
+        {% endif %}
+        <th>Customer ID</th>
+        <th>Length</th>
+        <th>Amount</th>
+        <th>Total debt</th>
+        <th>Debt left</th>
+        <th>Delay</th>
+        <th>Paid</th>
+        <th>Date</th>
+        <th>Estimated pay back</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ credit.id }}</td>
+        <td><a href="/customer/{{ credit.customerId.id }}">{{ credit.customerId.id }}</a></td>
+        <td>{{ credit.length }} months</td>
+        <td>€{{ credit.amount }}</td>
+        <td>€{{ (credit.amount+credit.price)|round(2) }}</td>
+        <td>€{{ credit.debt|round(2) }}</td>
+        <td>{% if credit.delay > 0 %}<strong>{{ credit.delay }}</strong>{% else %}{{ credit.delay }}{% endif %}d.</td>
+        <td>€{{ credit.paymentsSum|default(0) }}</td>
+        <td>{% if credit.acceptDate is not empty %}{{ credit.acceptDate|date('Y-m-d') }}{% else %}{{ credit.date|date('Y-m-d') }}{% endif %}</td>
+        <td>{{ credit.paybackTime|date('Y-m-d') }}</td>
+    </tr>
+    </tbody>
+</table>
+    {% if credit.debt < credit.paymentsSum|default(0) %}
+    <span style="color:red;">WARNING! OVERPAYMENT OF €{{ ((credit.amount+credit.price)|round(2) - credit.paymentsSum)|abs }}!</span> <br />
+    {% endif %}
+{% if cfg.Config.depositsUsed.value is not empty and cfg.config.depositsUsed.value != '0' %}
+    Deposits: {% for deposit in credit.deposits %}<a href="/deposits/{{ deposit.id }}">{{ deposit.id }}</a>, {% endfor %} {% if credit.acceptDate is empty %}<a href="/newDeposit/{{ credit.id }}">New deposit</a>{% endif %}<br />
+{% endif %}
+
+{% if credit.acceptDate is not empty %}
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+        <a href="/recalcBalance/{{ credit.id }}">Recalculate balance</a><br />
+        <a id="writeoffButton">Write off debt</a><br />
+    {% endif %}
+    <form id = "addWriteoff" style = "display:none" action="/addWriteoff" method="get">
+        <input type="number" step="0.01" id="sum" name="sum" placeholder="Sum"><br />
+        <input type="text" id="reason" name="reason" placeholder="Reason">
+        <input type="hidden" id="creditId" name="creditId" value="{{ credit.id }}">
+        <input type="submit" value="Write off">
+    </form>
+{% endif %}
+{% if credit.detalisation is not empty %}
+{% if credit.acceptDate is not empty %}
+    Payment detalisation: <br />
+{% else %}
+    Preliminary payment detalisation (dates will change after accepting credit, according to accept date): <br />
+{% endif %}
+    <table class="table table-bordered table-striped table-hover" id="credits">
+    <thead class="thead-inverse">
+    <tr>
+        <th>Month</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Price</th>
+        <th>Payment</th>
+        <th>Debt</th>
+        <th>Delay</th>
+    </tr>
+    </thead>
+        <tbody>
+    {% for month in  credit.detalisation %}
+            <tr>
+                <td>{{ month.month }}</a></td>
+                <td>{{ month.date }}</td>
+                <td>€{{ month.amount }}</td>
+                <td>€{{ month.price }}</td>
+                <td>€{{ month.payment }}</td>
+                <td>€{{ month.debt|default(0) }}</td>
+                <td>{{ month.delay }}</td>
+            </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}<br />
+    {% if credit.acceptDate is not empty %}
+    Payments: {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_DEBTOR')) and credit.debt > 0 %} (<a id="addPaymentButton">Add new</a>){% endif %}<br />
+    <form id = "addNewPayment" style = "display:none" action="/addPayment" method="get">
+        <input type="number" step="0.01" id="sum" name="sum" placeholder="sum">
+        <input type="hidden" id="creditId" name="creditId" value="{{ credit.id }}">
+        <input type="submit" value="Insert">
+    </form>
+
+    <table class="table table-bordered table-striped table-hover" id="payments">
+        <thead class="thead-inverse">
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for payment in credit.allPayments %}
+            <tr{% if payment.ignored == true %} style="background-color: red"{% endif %}>
+                <td>{{ payment.id }}</a></td>
+                <td>{{ payment.date|date }}</td>
+                <td>€{{ payment.sum }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    Writeoffs: <br />
+    <table class="table table-bordered table-striped table-hover" id="writeoffs">
+        <thead class="thead-inverse">
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Reason</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for writeoff in credit.writeoffs %}
+            <tr>
+                <td>{{ writeoff.id }}</a></td>
+                <td>{{ writeoff.date|date }}</td>
+                <td>€{{ writeoff.amount }}</td>
+                <td>{{ writeoff.reason }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $( "#addPaymentButton" ).click(function() {
+        $( "#addNewPayment" ).show( "slow" );
+    });
+    $( "#writeoffButton" ).click(function() {
+        $( "#addWriteoff" ).show( "slow" );
+    });
+    </script>
+{% endblock %}

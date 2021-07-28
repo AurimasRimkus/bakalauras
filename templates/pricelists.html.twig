@@ -1,0 +1,50 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+    <div class="container">
+        <h1>Pricelists</h1>
+        <a href="{{ path('addPricelist') }}">(Add pricelist)</a>
+        <table class="table table-bordered table-striped table-hover" id="credits">
+            <thead class="thead-inverse">
+            <tr>
+                <th>ID</th>
+                <th>Credit amount range</th>
+                <th>Length range</th>
+                <th>Interest</th>
+                <th>Remove</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for plist in pricelists %}
+                <tr>
+                    <td><a href="/pricelist/{{ plist.id }}">{{ plist.id }}</a></td>
+                    <td>{{ plist.creditFrom }} - {{ plist.creditTo }}</td>
+                    <td>{{ plist.lengthFrom }} - {{ plist.lengthTo }}</td>
+                    <td>{{ plist.interest }}%</td>
+                    <td><a href="/deletePricelist/{{ plist.id }}">X</a></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">No pricelists.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $(document).ready(function() {
+
+    $('#credits tr').click(function() {
+    var href = $(this).find("a").attr("href");
+    if(href) {
+    window.location = href;
+    }
+    });
+
+    });
+    </script>
+{% endblock %}

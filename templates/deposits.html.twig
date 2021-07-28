@@ -1,0 +1,51 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+    <div class="container">
+        <h1>Deposits</h1>
+        <table class="table table-bordered table-striped table-hover" id="deposits">
+            <thead class="thead-inverse">
+            <tr>
+                <th>id</th>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Credit</th>
+                <th>Remove</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for deposit in deposits %}
+                <tr>
+                    <td><a href="/deposits/{{ deposit.id }}">{{ deposit.id }}</a></td>
+                    <td>{{ deposit.type.name }}</td>
+                    <td>{{ deposit.name }}</td>
+                    <td>{{ deposit.credit.customerId.name }} {{ deposit.credit.customerId.surname }}</td>
+                    <td>{{ deposit.credit.id }}</td>
+                    <td><a href="/deleteDeposit/{{ deposit.id }}">X</a></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">No deposits.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $(document).ready(function() {
+
+    $('#deposits tr').click(function() {
+    var href = $(this).find("a").attr("href");
+    if(href) {
+    window.location = href;
+    }
+    });
+
+    });
+    </script>
+{% endblock %}

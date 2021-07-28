@@ -5,7 +5,7 @@
          xsi:noNamespaceSchemaLocation="bin/.phpunit/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         bootstrap="tests/bootstrap.php"
+         bootstrap="tests/autoload.php"
 >
     <php>
         <ini name="error_reporting" value="-1" />
@@ -23,7 +23,14 @@
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
+            <directory suffix=".php">./src</directory>
+            <exclude>
+                <directory suffix=".php">src/Migrations/</directory>
+                <directory suffix=".php">src/Security/</directory>
+                <directory suffix=".php">src/Repository/</directory>
+                <directory suffix=".php">src/Controller/</directory>
+                <file>src/Kernel.php</file>
+            </exclude>
         </whitelist>
     </filter>
 

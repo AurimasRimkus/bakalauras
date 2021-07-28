@@ -1,0 +1,37 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+<div class="container">
+    <h1>Customers</h1>
+    <table class="table table-bordered table-striped table-hover" id="payments">
+        <thead class="thead-inverse">
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Admin</th>
+            <th>System admin</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for systUser in users %}
+        <tr>
+            <td>{{ systUser.id }}</td>
+            <td>{{ systUser.email }}</td>
+            <td>{{ systUser.roles|join(', ') }}</td>
+            <td>{% if 'ROLE_ADMIN' in systUser.roles %}<a href = '/roles/rAdmin/{{ systUser.id }}'>Remove admin status</a>{% else %}<a href = '/roles/mAdmin/{{ systUser.id }}'>Make admin</a>{% endif %}</td>
+            <td>{% if 'ROLE_SUPER_ADMIN' in systUser.roles %}<a href = '/roles/rSuperAdmin/{{ systUser.id }}'>Remove system admin status</a>{% else %}<a href = '/roles/mSuperAdmin/{{ systUser.id }}'>Make system admin</a>{% endif %}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">No users!</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+{% endblock %}

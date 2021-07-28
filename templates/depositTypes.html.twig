@@ -1,0 +1,46 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+    <div class="container">
+        <h1>Deposit types</h1>
+        <a href="{{ path('addDepositType') }}">(Add deposit type)</a>
+        <table class="table table-bordered table-striped table-hover" id="credits">
+            <thead class="thead-inverse">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Remove</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for type in depositTypes %}
+                <tr>
+                    <td><a href="/depositTypes/{{ type.id }}">{{ type.id }}</a></td>
+                    <td>{{ type.name }}</td>
+                    <td><a href="/deleteDepositType/{{ type.id }}">X</a></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">No deposit types.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $(document).ready(function() {
+
+    $('#credits tr').click(function() {
+    var href = $(this).find("a").attr("href");
+    if(href) {
+    window.location = href;
+    }
+    });
+
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+    <div class="container">
+        <h1>{% if mode == 'applications' %}Applications{% else %}Credits{% endif %}</h1>
+        <table class="table table-bordered table-striped table-hover" id="credits">
+            <thead class="thead-inverse">
+            <tr>
+                <th>id</th>
+                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+                <th>Customer ID</th>
+                {% endif %}
+                <th>Length (months)</th>
+                <th>Amount</th>
+                <th>Price</th>
+                {% if mode == 'applications' and (is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')) %}
+                    <th>Accept</th>
+                    <th>Decline</th>
+                {% elseif mode == 'credit' %}
+                    <th>Debt</th>
+                    <th>Delay (days)</th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for credit in credits %}
+                <tr>
+                    <td><a href="/credits/{{ credit.id }}">{{ credit.id }}</a></td>
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+                    <td>{{ credit.customerId.id }}</td>
+                    {% endif %}
+                    <td>{{ credit.length }}</td>
+                    <td>€{{ credit.amount }}</td>
+                    <td>€{{ credit.price|round(2) }}</td>
+                    {% if mode == 'applications' and (is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')) %}
+                        <td><a href="/acceptApplication/{{ credit.id }}">V</a></td>
+                        <td><a href="/rejectApplication/{{ credit.id }}">X</a></td>
+                    {% elseif mode == 'credit' %}
+                        <td>€{{ credit.debt }}</td>
+                        <td>{{ credit.delay }}</td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr>
+                    {% if mode == 'applications' %}
+                        <td colspan="7">No applications!</td>
+                    {% else %}
+                        <td colspan="6">No credits!</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $(document).ready(function() {
+
+    $('#credits tr').click(function() {
+    var href = $(this).find("a").attr("href");
+    if(href) {
+    window.location = href;
+    }
+    });
+
+    });
+    </script>
+{% endblock %}

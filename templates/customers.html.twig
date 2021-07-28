@@ -1,0 +1,49 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+    <div class="container">
+        <h1>Customers</h1>
+        <table class="table table-bordered table-striped table-hover" id="credits">
+            <thead class="thead-inverse">
+            <tr>
+                <th>ID</th>
+                <th>Name Surname</th>
+                <th>Person code</th>
+                <th>Email</th>
+                <th>Account number</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for customer in customers %}
+                <tr>
+                    <td><a href="/customer/{{ customer.id }}">{{ customer.id }}</a></td>
+                    <td>{{ customer.name }} {{ customer.surname }}</td>
+                    <td>{{ customer.personCode }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.accountNumber }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">No registered customers!</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $(document).ready(function() {
+
+    $('#credits tr').click(function() {
+    var href = $(this).find("a").attr("href");
+    if(href) {
+    window.location = href;
+    }
+    });
+
+    });
+    </script>
+{% endblock %}

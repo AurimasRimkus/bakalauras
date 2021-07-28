@@ -1,0 +1,14 @@
+{% extends 'adminBase.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/form.css?v=1') }}">
+{% endblock %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% block adminBody %}
+<div class = "form">
+    <h1>{{ form_name|default() }}</h1><br/>
+    {{ form_start(form) }}
+    {{ form_widget(form, {attr: {class: 'form-group row'}}) }}
+    {{ form_end(form) }}
+</div>
+{% endblock %}

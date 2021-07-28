@@ -1,0 +1,70 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+    <div class="container">
+        <h1>Writeoffs</h1>
+        <table class="table table-bordered table-striped table-hover" id="payments">
+            <thead class="thead-inverse">
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Credit</th>
+                <th>Amount</th>
+                <th>Reason</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for writeoff in writeoffs %}
+                <tr>
+                    <td>{{ writeoff.id }}</td>
+                    <td>{{ writeoff.date|date }}</td>
+                    <td>{{ writeoff.credit.id }}</td>
+                    <td id="amount{{ writeoff.id }}">{{ writeoff.amount }}</td>
+                    <td>{{ writeoff.reason }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">No writeoffs.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+        {{ parent() }}
+    <script>
+        $(function(){
+            $("td").click(function(event){
+                if($(this).children("input").length > 0)
+                    return false;
+                var tdObj = $(this);
+                var preText = tdObj.html();
+                var inputObj = $("<input type='text' />");
+                tdObj.html("");
+                inputObj.width(tdObj.width())
+                    .height(tdObj.height())
+                    .css({border:"0px",fontSize:"17px"})
+                    .val(preText)
+                    .appendTo(tdObj)
+                    .trigger("focus")
+                    .trigger("select");
+                inputObj.keyup(function(event){
+                    if(13 == event.which) { // press ENTER-key
+                        var text = $(this).val();
+                        tdObj.html(text);
+                        console.log(event);
+                        console.log(text);
+                    }
+                    else if(27 == event.which) {  // press ESC-key
+                        tdObj.html(preText);
+                    }
+                });
+                inputObj.click(function(){
+                    return false;
+                });
+            });
+        });
+    </script>
+{% endblock %}

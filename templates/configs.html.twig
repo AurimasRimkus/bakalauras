@@ -1,0 +1,27 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block adminBody %}
+    <div class="container">
+        <h1>Configs</h1>
+        <form id="saveConfigs" action="/saveConfigs" method="get">
+            {% for config in configs %}
+                {% if config.name in textFields %}
+                    <div class="form-group row">
+                        <label for="input{{ config.name }}" class="col-sm-2 col-form-label">{{ config.name }}</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="{{ config.name }}" name="{{ config.name }}">{{ config.Value }}</textarea>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="form-group row">
+                        <label for="input{{ config.name }}" class="col-sm-2 col-form-label">{{ config.name }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="{{ config.name }}" name="{{ config.name }}" value="{{ config.Value }}">
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <input type="submit" value="Save">
+        </form>
+    </div>
+{% endblock %}
